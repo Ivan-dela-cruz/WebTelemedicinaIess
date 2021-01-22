@@ -23,11 +23,23 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $users = User::all();
         $mensaje = "Hola ";
-        return view('admin.users.index', compact('users', 'mensaje'));
+        return view('admin.users.index',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'users' => $users
+        ], compact('users', 'mensaje'));
     }
 
 
@@ -36,9 +48,26 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        return view('admin.users.create');
+        //consultas los roles para pasar la formulario
+        ///DEBE PASARSE EN CLAVE VALOR EJEMPLO : {'K':'V'}
+        $roles = Role::where('status','activo')->pluck('name','id');
+
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        return view('admin.users.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            ///ENVIAS EL ROL AL FORMULARO 
+            'roles'=>$roles
+        ]);
     }
 
     /**
@@ -63,6 +92,10 @@ class UserController extends Controller
     public function store(StoreUserPost $request)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $user = new  User;
@@ -73,17 +106,16 @@ class UserController extends Controller
             $user->address = $request->address;
             $user->phone = $request->phone;
             $user->email = $request->email;
-            $user->status = $request->status;
+            //$user->status = $request->status;
+            $user->status = $status;
             $user->password = $this->generatePassword($request->ci);
             $user->url_image = $this->UploadImage($request);
             $user->save();
             //ASINAMOS EL ROL ESCOJIDO EN EL FORMULARIO
-            $role = Role::findById($request->rol);
-            $user->assignRole($role);
+            //$role = Role::findById($request->rol);
+            //$user->assignRole($role->name);
             DB::commit();
-            return response()->json(
-                $user, 200
-            );
+            return redirect()->route('get-users');
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
@@ -121,9 +153,25 @@ class UserController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        $roles = Role::where('status','activo')->pluck('name','id');
+        $users = User::find($id);
+       
+        return view('admin.users.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'roles'=>$roles,
+            'users'=>$users
+        ]);
     }
 
     /**
@@ -137,6 +185,10 @@ class UserController extends Controller
     {
 
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $user = User::find($id);
@@ -149,7 +201,7 @@ class UserController extends Controller
 
             $user->phone = $request->phone;
             $user->email = $request->email;
-            $user->status = $request->status;
+            $user->status = $status;
             if ($request->url_image) {
                 if ($user->url_image != $request->url_image) {
                     $user->url_image = $this->UploadImage($request);
@@ -157,13 +209,13 @@ class UserController extends Controller
             }
             $user->save();
             ///REVOCAMOS TODOS LOS PERMISOS PARA DESPUES ASIGNARLE EL NUEVO PERMISO SELECCIONADO
-            $roles_name = $user->getRoleNames();
-            $user->removeRole($roles_name[0]);
+            //$roles_name = $user->getRoleNames();
+            //$user->removeRole($roles_name[0]);
             //ASINAMOS EL ROL ESCOJIDO EN EL FORMULARIO
-            $role = Role::findById($request->rol);
-            $user->assignRole($role);
+            //$role = Role::findById($request->rol);
+            //$user->assignRole($role);
             DB::commit();
-            return response()->json($user, 200);
+            return redirect()->route('get-users');
 
         } catch (Exception $e) {
 

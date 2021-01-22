@@ -135,6 +135,12 @@ class PageController extends Controller
     public function sideMenu()
     {
         return [
+            'panel-control' => [
+                'icon' => 'trello',
+                'layout' => 'side-menu',
+                'page_name' => 'event.index',
+                'title' => 'Panel de control'
+            ],
             'dashboard' => [
                 'icon' => 'home',
                 'layout' => 'side-menu',
@@ -595,6 +601,12 @@ class PageController extends Controller
     public function simpleMenu()
     {
         return [
+            'panel-control' => [
+                'icon' => 'trello',
+                'layout' => 'simple-menu',
+                'page_name' => 'panel-control',
+                'title' => 'Panel de control'
+            ],
             'dashboard' => [
                 'icon' => 'home',
                 'layout' => 'simple-menu',
@@ -1049,6 +1061,12 @@ class PageController extends Controller
     public function topMenu()
     {
         return [
+            'panel-control' => [
+                'icon' => 'trello',
+                'layout' => 'top-menu',
+                'page_name' => 'panel-control',
+                'title' => 'Panel de control'
+            ],
             'dashboard' => [
                 'icon' => 'home',
                 'layout' => 'top-menu',

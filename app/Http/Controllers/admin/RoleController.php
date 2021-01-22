@@ -17,15 +17,25 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $roles = ModelsRole::with('permissions')->get();  //lista los roles y permisos
         $role = ModelsRole::findById(1);
         $permissions =  $role->permissions;
         //return $roles;
 
-        return view('admin.roles.index', compact('roles', 'permissions', 'role'));
+        return view('admin.roles.index',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout
+        ], compact('roles', 'permissions', 'role'));
     }
 
     public function getRoles()
@@ -57,11 +67,22 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $permissions = Permission::all();
         //return $list_permisos;
-        return view('admin.roles.create', compact('permissions'));
+        return view('admin.roles.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+        ], compact('permissions'));
     }
 
     /**
@@ -115,11 +136,22 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $role = ModelsRole::findById($id);
         $permissions = Permission::all();
-        return view('admin.roles.edit', compact('role', 'permissions'));
+        return view('admin.roles.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+        ], compact('role', 'permissions'));
     }
 
     /**

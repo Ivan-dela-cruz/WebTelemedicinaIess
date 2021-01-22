@@ -35,11 +35,11 @@ class AllergiesController extends Controller
             'theme' => $theme,
             'layout' => $layout,
             'allergies'=>$allergies
-        ]);
+        ],compact('allergies','layout'));
 
         
 
-        return view('admin.allergies.index',compact('allergies','layout'));
+        //return view('admin.allergies.index',compact('allergies','layout'));
     }
 
     public function ApiAllergies()

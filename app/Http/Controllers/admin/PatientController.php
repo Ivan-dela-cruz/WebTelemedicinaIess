@@ -25,16 +25,24 @@ class PatientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $text_search = $request->text_search;
-
         if ($text_search == '' || $text_search == null) {
             $users = Patients::paginate(5);
-            return response()->json([
+            return view('admin.patients.index',[
+                'top_menu' => $this->topMenu(),
+                'side_menu' => $this->sideMenu(),
+                'simple_menu' => $this->simpleMenu(),
+                'first_page_name' => $activeMenu['first_page_name'],
+                'second_page_name' => $activeMenu['second_page_name'],
+                'third_page_name' => $activeMenu['third_page_name'],
+                'page_name' => $pageName,
+                'theme' => $theme,
+                'layout' => $layout,
                 'users' => $users,
-
-            ], 200);
+            ]);
         } else {
             $users = Patients::where(function ($query) use ($text_search) {
                 $query = $query->orWhere('name', 'like', '%' . $text_search . '%');
@@ -60,9 +68,20 @@ class PatientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        return view('admin.patients.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+        ]);
     }
 
     /**
@@ -88,6 +107,10 @@ class PatientController extends Controller
     public function store(StorePatientPost $request)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $user = new  User;
@@ -98,13 +121,13 @@ class PatientController extends Controller
             $user->address = $request->address;
             $user->phone = $request->phone;
             $user->email = $request->email;
-            $user->status = $request->status;
+            $user->status = $status;
             $user->password = $this->generatePassword($request->ci);
             $user->url_image = $this->UploadImage($request);
             $user->save();
             //ASINAMOS EL ROL DE PACIENTE CON EL ID 3
-            $role = Role::findById(3);
-            $user->assignRole($role);
+            //$role = Role::findById(3);
+            //$user->assignRole($role);
             //LLENAR LOS DATOS CORRESPONDIENTES A LA TABLA PATITIENTS/
             $patient = new Patients();
             $patient->ci = $request->ci;
@@ -119,7 +142,7 @@ class PatientController extends Controller
             $patient->phone = $request->phone;
             $patient->phone_2 = $request->phone_2;
             $patient->email = $request->email;
-            $patient->status = $request->status;
+            $patient->status = $status;
             $patient->instruction = $request->instruction;
             $patient->marital_status = $request->marital_status;
 
@@ -140,7 +163,7 @@ class PatientController extends Controller
             $medical_record->save();
 
             DB::commit();
-            return response()->json($user, 200);
+            return redirect()->route('get-patients');
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
@@ -170,9 +193,23 @@ class PatientController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        $users = Patients::find($id);
+       
+        return view('admin.patients.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'users'=>$users
+        ]);
     }
 
     /**
@@ -184,6 +221,10 @@ class PatientController extends Controller
      */
     public function update(UpdatePatientPut $request, $id)
     {
+        $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
         ///CAMPOS EN LA BASE DE DATOS
         //name, last_name,username,birth_date, gender, address, province, city, phone, url_image, email, password, status
         ///BASE DE DATOS PATIENTS
@@ -203,7 +244,7 @@ class PatientController extends Controller
         $user->address = $request->address;
         $user->phone = $request->phone;
         $user->email = $request->email;
-        $user->status = $request->status;
+        $user->status = $status;
         if ($request->url_image) {
             if ($user->url_image != $request->url_image) {
                 $user->url_image = $this->UploadImage($request);
@@ -224,7 +265,7 @@ class PatientController extends Controller
         $patient->phone = $request->phone;
         $patient->phone_2 = $request->phone_2;
         $patient->email = $request->email;
-        $patient->status = $request->status;
+        $patient->status = $status;
         //ASIGNAMOS LA MISMA RUTA PARA LA IMAGEN DEL USUARIO
         $patient->url_image = $user->url_image;
         $patient->instruction = $request->instruction;
@@ -239,7 +280,7 @@ class PatientController extends Controller
         ///ejecutamos el commit a la base de datos
 
         //RETORNAMOS LOS DATOS DE PACIENTE MODIFICADO Y EL ESTADO 200
-        return response()->json($patient, 200);
+        return redirect()->route('get-patients');
     }
 
     /**
