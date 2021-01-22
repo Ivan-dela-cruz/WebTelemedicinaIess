@@ -8,7 +8,7 @@
 <h2 class="intro-y text-lg font-medium mt-10">Listado de alergías</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-no-wrap items-center mt-2">
-            <a href="{{route('create-allergy')}}" class="button text-white bg-theme-1 shadow-md mr-2">Nueva alergía</a>
+            <a href="{{route('create-allergy')}}" class="button text-white bg-theme-1 shadow-md mr-2">Nueva alergia</a>
             <div class="dropdown">
                 <button class="dropdown-toggle button px-2 box text-gray-700 dark:text-gray-300">
                     <span class="w-5 h-5 flex items-center justify-center">

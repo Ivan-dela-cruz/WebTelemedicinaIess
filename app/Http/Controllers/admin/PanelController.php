@@ -20,8 +20,9 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class PanelController extends Controller
 {
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'panel_control')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $now = Carbon::now();
         $month = $now->month;
         $day = $now->day;
@@ -90,8 +91,17 @@ class PanelController extends Controller
             ->get();
 
 
-        return view('admin.init.panel',
-            compact('doctors_count', 'specialties_count', 'users_count',
+        return view('admin.init.panel',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout
+        ],compact('doctors_count', 'specialties_count', 'users_count',
                 'treatments_count', 'appointments_count', 'patients_count',
                 'appointments_count_an', 'patients_count_month', 'treatments_count_month',
                 'appointments_count_day', 'appointments_month', 'payments_count_month',
