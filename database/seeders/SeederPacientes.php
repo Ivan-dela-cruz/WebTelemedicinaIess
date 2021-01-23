@@ -1,4 +1,5 @@
 <?php
+namespace Database\Seeders;
 
 use App\MedicalRecord;
 use App\Patients;

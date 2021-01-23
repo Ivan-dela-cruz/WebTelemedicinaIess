@@ -9,7 +9,8 @@
 </div>
 <div class="grid grid-cols-12 gap-6 mt-5">
     <div class="intro-y col-span-12 lg:col-span-12">
-        {!! Form::open(['url' => 'store-user']) !!}
+       
+        {!! Form::open(['url' => route('store-user'), 'method' => 'post','files'=>true]) !!}
             @include('admin.users.partials.form')
         {!! Form::close() !!}
     </div>
