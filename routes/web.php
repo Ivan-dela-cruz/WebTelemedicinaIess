@@ -72,14 +72,25 @@ Route::middleware('loggedin')->group(function() {
     Route::patch('change-status-patient/{id}', 'App\Http\Controllers\admin\PatientController@changeStatus')->name('change-status-patient');
     Route::get('show-patient/{id}', 'App\Http\Controllers\admin\PatientController@show')->name('show-patient');
 
+    //CONJUNTO DE RUTAS DE CONFIGURACIONES
     //RUTAS PARA LAS ALERGIAS
-    Route::get('allergies', 'App\Http\Controllers\admin\AllergiesController@index')->name('allergiesindex');
-    Route::post('allergies', 'App\Http\Controllers\admin\AllergiesController@store')->name('store-allergy');
-    Route::put('allergies/{id}', 'App\Http\Controllers\admin\AllergiesController@update')->name('put-allergy');
-    Route::get('allergies/create', 'App\Http\Controllers\admin\AllergiesController@create')->name('create-allergy');
-    Route::get('allergies/edit/{id}', 'App\Http\Controllers\admin\AllergiesController@edit')->name('edit-allergy');
+    Route::get('get-allergies', 'App\Http\Controllers\admin\AllergiesController@index')->name('allergiesindex');
+    Route::get('create-allergies', 'App\Http\Controllers\admin\AllergiesController@create')->name('create-allergy');
+    Route::post('store-allergie', 'App\Http\Controllers\admin\AllergiesController@store')->name('store-allergy');
+    Route::get('edit-allergie/{id}', 'App\Http\Controllers\admin\AllergiesController@edit')->name('edit-allergy');
+    Route::put('put-allergie/{id}', 'App\Http\Controllers\admin\AllergiesController@update')->name('put-allergy');
     Route::patch('change-status-allergy/{id}', 'App\Http\Controllers\admin\AllergiesController@changeStatus')->name('change-status-allergy');
     Route::get('api-select-allergies', 'App\Http\Controllers\admin\AllergiesController@getAllergiesSelect')->name('api-select-allergies');
+    ///RUTAS PARA LAS ESPECIALIDADES
+    //Route::get('get-specialties', 'App\Http\Controllers\admin\SpecialtyController@getSpecialties')->name('get-specialties');
+    //Route::get('app-specialties', 'App\Http\Controllers\admin\SpecialtyController@ApiSpecialties')->name('app-specialties')->middleware('jwtAuth');;
+    //Route::get('specialties', 'App\Http\Controllers\admin\SpecialtyController@getDataSelect')->name('specialties');
+    Route::get('get-specialties', 'App\Http\Controllers\admin\SpecialtyController@index')->name('get-specialties');
+    Route::get('create-specialty', 'App\Http\Controllers\admin\SpecialtyController@create')->name('create-specialties');
+    Route::post('store-specialty', 'App\Http\Controllers\admin\SpecialtyController@store')->name('store-specialty');
+    Route::get('edit-specialty/{id}', 'App\Http\Controllers\admin\SpecialtyController@edit')->name('edit-specialties');
+    Route::put('put-specialty/{id}', 'App\Http\Controllers\admin\SpecialtyController@update')->name('put-specialty');
+    Route::patch('api-change-status-specialty/{id}', 'App\Http\Controllers\admin\SpecialtyController@changeStatus')->name('change-status-specialty');
 
 
 // Registrando um serviço de exemplo

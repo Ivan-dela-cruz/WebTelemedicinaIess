@@ -25,14 +25,22 @@ class SpecialtyController extends Controller
         ;
     })->paginate(10);
     */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $speacilties = Specialty::orderBy('name', 'ASC')->get();
-
-        return response()->json([
-            'success'=>true,
+        return view('admin/specialties/index', [
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
             'specialties' => $speacilties
-        ], 200);
+        ]);
     }
     public function ApiSpecialties()
     {
