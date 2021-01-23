@@ -26,7 +26,7 @@ class UserController extends Controller
     public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
-        $users = User::all();
+        $users = User::orderBy('name','ASC')->paginate(8);
         $mensaje = "Hola ";
         return view('admin.users.index',[
             'top_menu' => $this->topMenu(),
@@ -109,11 +109,12 @@ class UserController extends Controller
             //$user->status = $request->status;
             $user->status = $status;
             $user->password = $this->generatePassword($request->ci);
-            $user->url_image = $this->UploadImage($request);
+            $user->url_image = $this->loadFile($request, 'url_image', 'users', 'users');
+           
             $user->save();
             //ASINAMOS EL ROL ESCOJIDO EN EL FORMULARIO
-            //$role = Role::findById($request->rol);
-            //$user->assignRole($role->name);
+            $role = Role::findById($request->rol);
+            $user->assignRole($role->name);
             DB::commit();
             return redirect()->route('get-users');
         } catch (Exception $e) {
@@ -202,11 +203,10 @@ class UserController extends Controller
             $user->phone = $request->phone;
             $user->email = $request->email;
             $user->status = $status;
-            if ($request->url_image) {
-                if ($user->url_image != $request->url_image) {
-                    $user->url_image = $this->UploadImage($request);
-                }
+            if ($request->file('url_image')) {
+                $user->url_image = $this->loadFile($request, 'url_image', 'users', 'users');
             }
+           
             $user->save();
             ///REVOCAMOS TODOS LOS PERMISOS PARA DESPUES ASIGNARLE EL NUEVO PERMISO SELECCIONADO
             //$roles_name = $user->getRoleNames();
