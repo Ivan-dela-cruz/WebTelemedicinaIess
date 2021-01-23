@@ -14,10 +14,10 @@
                 <td class="w-40">
                     <div class="flex">
                         <div class="w-10 h-10 image-fit zoom-in">
-                            @if ($user->staurl_imagetus=='#')
+                            @if ($user->url_image=='' || $user->url_image=='#' )
                             <img alt="Midone Tailwind HTML Admin Template" class="tooltip rounded-full" src="{{ asset('dist/images/user.jpg')}}">
                             @else
-                            <img alt="Midone Tailwind HTML Admin Template" class="tooltip rounded-full" src="{{ asset('dist/images/user.jpg')}}">
+                            <img alt="Midone Tailwind HTML Admin Template" class="tooltip rounded-full" src="{{ asset($user->url_image)}}">
                             @endif
                         </div>
                         <p></p>

@@ -40,6 +40,10 @@
         <!-- BEGIN: Data List -->
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
             @include('admin.users.table')
+            <div style="align-content: left;">
+                {{$users->links()}}
+            </div>
+           
         </div>
     </div>
     
