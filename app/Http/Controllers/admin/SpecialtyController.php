@@ -25,14 +25,22 @@ class SpecialtyController extends Controller
         ;
     })->paginate(10);
     */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $speacilties = Specialty::orderBy('name', 'ASC')->get();
-
-        return response()->json([
-            'success'=>true,
+        return view('admin/specialties/index', [
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
             'specialties' => $speacilties
-        ], 200);
+        ]);
     }
     public function ApiSpecialties()
     {
@@ -49,9 +57,20 @@ class SpecialtyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        return view('admin.specialties.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout
+        ]);
     }
 
     /**
@@ -73,15 +92,19 @@ class SpecialtyController extends Controller
     public function store(StoreSpecialtyPost $request)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             $specialty = new Specialty();
             $specialty->name = $request->name;
             $specialty->description = $request->description;
-            $specialty->status = $request->status;
+            $specialty->status = $status;
             $specialty->color = $request->color;
             $specialty->url_image = $this->UploadImage($request);
             $specialty->save();
-            return response()->json($specialty, 200);
+            return redirect()->route('get-specialties');
         } catch (Exception $e) {
             return response()->json(['errors'=>$e], 422);
         }
@@ -104,9 +127,23 @@ class SpecialtyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        $speacilty = Specialty::find($id);
+       
+        return view('admin.specialties.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'speacilty'=>$speacilty
+        ]);
     }
 
     /**
@@ -119,11 +156,15 @@ class SpecialtyController extends Controller
     public function update(UpdateSpecialtyPut $request, $id)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             $specialty = Specialty::find($id);
             $specialty->name = $request->name;
             $specialty->description = $request->description;
-            $specialty->status = $request->status;
+            $specialty->status = $status;
             $specialty->color = $request->color;
             if($request->url_image){
                 if($specialty->url_image != $request->url_image){
@@ -131,7 +172,7 @@ class SpecialtyController extends Controller
                 }
             }
             $specialty->save();
-            return response()->json($specialty, 200);
+            return redirect()->route('get-specialties');
         } catch (Exception $e) {
             return response()->json(['errors'=>$e], 422);
         }

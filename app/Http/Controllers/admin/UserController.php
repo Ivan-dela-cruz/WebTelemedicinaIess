@@ -209,11 +209,11 @@ class UserController extends Controller
            
             $user->save();
             ///REVOCAMOS TODOS LOS PERMISOS PARA DESPUES ASIGNARLE EL NUEVO PERMISO SELECCIONADO
-            //$roles_name = $user->getRoleNames();
-            //$user->removeRole($roles_name[0]);
+            $roles_name = $user->getRoleNames();
+            $user->removeRole($roles_name[0]);
             //ASINAMOS EL ROL ESCOJIDO EN EL FORMULARIO
-            //$role = Role::findById($request->rol);
-            //$user->assignRole($role);
+            $role = Role::findById($request->rol);
+            $user->assignRole($role);
             DB::commit();
             return redirect()->route('get-users');
 

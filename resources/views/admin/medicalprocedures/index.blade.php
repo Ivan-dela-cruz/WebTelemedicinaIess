@@ -1,14 +1,14 @@
 @extends('../layout/' . $layout)
 
 @section('subhead')
-    <title>Alergias</title>
+    <title>Procedimientos</title>
 @endsection
 
 @section('subcontent')
-<h2 class="intro-y text-lg font-medium mt-10">Listado de alergias</h2>
+<h2 class="intro-y text-lg font-medium mt-10">Lista de procedimientos médicos</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-no-wrap items-center mt-2">
-            <a href="{{route('create-allergy')}}" class="button text-white bg-theme-1 shadow-md mr-2">Nueva alergia</a>
+            <a href="{{route('create-medical-procedure')}}" class="button text-white bg-theme-1 shadow-md mr-2">Nuevo procedimiento médico</a>
             <div class="dropdown">
                 <button class="dropdown-toggle button px-2 box text-gray-700 dark:text-gray-300">
                     <span class="w-5 h-5 flex items-center justify-center">
@@ -39,8 +39,7 @@
         </div>
         <!-- BEGIN: Data List -->
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            @include('admin.allergies.table')
-            {{$allergies->links()}}
+            @include('admin.medicalprocedures.table')
         </div>
     </div>
     

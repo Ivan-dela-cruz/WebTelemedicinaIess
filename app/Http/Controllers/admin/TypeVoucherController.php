@@ -15,12 +15,21 @@ class TypeVoucherController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $documents = TypeVoucher::all();
-        return response()->json([
+        return view('admin/typesdocuments/index', [
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
             'documents' => $documents,
-            'success' => true
         ]);
     }
 
@@ -34,14 +43,24 @@ class TypeVoucherController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
+
         $documents = TypeVoucher::where('status', 'activo')->orderBy('document', 'ASC')->get();
 
-        return response()->json([
-            'success' => true,
+        return view('admin.typesdocuments.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
             'documents' => $documents
-        ], 200);
+        ]);
     }
 
     /**
@@ -53,14 +72,21 @@ class TypeVoucherController extends Controller
     public function store(StoreTypeVoucherPost $request)
     {
         try {
+            $sequence = 0;
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $type = new TypeVoucher();
             $type->document = $request->document;
             $type->abbreviation = $request->abbreviation;
             $type->serie = $request->serie;
+            $type->sequence = $sequence;
             $type->start = $request->start;
             $type->end = $request->end;
+            $type->status = $status;
             $type->save();
-            return response()->json(['type' => $type, 'success' => true], 200);
+            return redirect()->route('get-type-documents');
         } catch (Exception $e) {
             return response()->json(['error' => $e], 422);
         }
@@ -84,9 +110,22 @@ class TypeVoucherController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        $documento = TypeVoucher::find($id);
+        return view('admin.typesdocuments.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'documento'=>$documento
+        ]);
     }
 
     /**
@@ -99,15 +138,22 @@ class TypeVoucherController extends Controller
     public function update(Request $request)
     {
         try {
+            $sequence = 0;
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $type = TypeVoucher::find($request->id);
             $type->document = $request->document;
             $type->abbreviation = $request->abbreviation;
             $type->serie = $request->serie;
+            $type->sequence = $sequence;
             $type->start = $request->start;
             $type->end = $request->end;
-            $type->status = $request->status;
+            $type->status = $status;
             $type->save();
-            return response()->json(['type' => $type, 'success' => true], 200);
+            //return response()->json(['type' => $type, 'success' => true], 200);
+            return redirect()->route('get-type-documents');
         } catch (Exception $e) {
             return response()->json(['error' => $e], 422);
         }

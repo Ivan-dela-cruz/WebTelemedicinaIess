@@ -126,8 +126,8 @@ class PatientController extends Controller
             $user->url_image = $this->UploadImage($request);
             $user->save();
             //ASINAMOS EL ROL DE PACIENTE CON EL ID 3
-            //$role = Role::findById(3);
-            //$user->assignRole($role);
+            $role = Role::findById(3);
+            $user->assignRole($role);
             //LLENAR LOS DATOS CORRESPONDIENTES A LA TABLA PATITIENTS/
             $patient = new Patients();
             $patient->ci = $request->ci;

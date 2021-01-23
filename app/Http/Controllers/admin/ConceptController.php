@@ -17,14 +17,23 @@ class ConceptController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $concepts = Concepto::orderBy('name', 'ASC')->get();
 
-        return response()->json([
-            'success' => true,
+        return view('admin/concepts/index', [
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
             'concepts' => $concepts
-        ], 200);
+        ]);
     }
 
     public function getConcepts()
@@ -46,9 +55,20 @@ class ConceptController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        return view('admin.concepts.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout
+        ]);
     }
 
     /**
@@ -60,15 +80,19 @@ class ConceptController extends Controller
     public function store(StoreConceptPost $request)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $concept = new Concepto();
             $concept->name = $request->name;
             $concept->description = $request->description;
-            $concept->status = $request->status;
+            $concept->status = $status;
             $concept->save();
             DB::commit();
-            return response()->json($concept, 200);
+            return redirect()->route('get-concepts');
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e], 422);
@@ -92,9 +116,23 @@ class ConceptController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        $concept = Concepto::find($id);
+       
+        return view('admin.concepts.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'concept'=>$concept
+        ]);
     }
 
     /**
@@ -107,15 +145,19 @@ class ConceptController extends Controller
     public function update(UpdateConceptPut $request, $id)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $concept = Concepto::find($id);
             $concept->name = $request->name;
             $concept->description = $request->description;
-            $concept->status = $request->status;
+            $concept->status = $status;
             $concept->save();
             DB::commit();
-            return response()->json($concept, 200);
+            return redirect()->route('get-concepts');
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e], 422);

@@ -21,14 +21,23 @@ class DiagnosticController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $diagnostics = Diagnostic::orderBy('name', 'ASC')->get();
 
-        return response()->json([
-            'success' => true,
+        return view('admin/diagnostics/index', [
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
             'diagnostics' => $diagnostics
-        ], 200);
+        ]);
     }
 
     public function ApiDiagnostics()
@@ -63,9 +72,20 @@ class DiagnosticController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        return view('admin.diagnostics.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout
+        ]);
     }
 
     /**
@@ -77,16 +97,20 @@ class DiagnosticController extends Controller
     public function store(StoreDiagnosticPost $request)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $diagnostic = new Diagnostic();
             $diagnostic->code = $request->code;
             $diagnostic->name = $request->name;
             $diagnostic->description = $request->description;
-            $diagnostic->status = $request->status;
+            $diagnostic->status = $status;
             $diagnostic->save();
             DB::commit();
-            return response()->json($diagnostic, 200);
+            return redirect()->route('get-diagnostics');
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e], 422);
@@ -110,9 +134,23 @@ class DiagnosticController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        $diagnostic = Diagnostic::find($id);
+       
+        return view('admin.diagnostics.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'diagnostic'=>$diagnostic
+        ]);
     }
 
     /**
@@ -125,16 +163,20 @@ class DiagnosticController extends Controller
     public function update(UpdateDiagnosticPut $request, $id)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $diagnostic = Diagnostic::find($id);
             $diagnostic->code = $request->code;
             $diagnostic->name = $request->name;
             $diagnostic->description = $request->description;
-            $diagnostic->status = $request->status;
+            $diagnostic->status = $status;
             $diagnostic->save();
             DB::commit();
-            return response()->json($diagnostic, 200);
+            return redirect()->route('get-diagnostics');
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e], 422);

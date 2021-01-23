@@ -17,14 +17,23 @@ class ReferencesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $references = Reference::orderBy('name', 'ASC')->get();
 
-        return response()->json([
-            'success' => true,
+        return view('admin/references/index', [
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
             'references' => $references
-        ], 200);
+        ]);
     }
     public function getReferences()
     {
@@ -45,9 +54,20 @@ class ReferencesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        return view('admin.references.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout
+        ]);
     }
 
     /**
@@ -59,15 +79,19 @@ class ReferencesController extends Controller
     public function store(StoreReferencesPost $request)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $reference = new Reference();
             $reference->name = $request->name;
             $reference->description = $request->description;
-            $reference->status = $request->status;
+            $reference->status = $status;
             $reference->save();
             DB::commit();
-            return response()->json($reference, 200);
+            return redirect()->route('get-references');
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e], 422);
@@ -91,9 +115,23 @@ class ReferencesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        $reference = Reference::find($id);
+       
+        return view('admin.references.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'reference'=>$reference
+        ]);
     }
 
     /**
@@ -106,15 +144,19 @@ class ReferencesController extends Controller
     public function update(UpdateReferencesPut $request, $id)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $reference = Reference::find($id);
             $reference->name = $request->name;
             $reference->description = $request->description;
-            $reference->status = $request->status;
+            $reference->status = $status;
             $reference->save();
             DB::commit();
-            return response()->json($reference, 200);
+            return redirect()->route('get-references');
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e], 422);
