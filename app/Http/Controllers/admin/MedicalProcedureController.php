@@ -19,10 +19,9 @@ class MedicalProcedureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-
-
+        $activeMenu = $this->activeMenu($layout, $pageName);
         $medicalprocedures = MedicalProcedure::join('references', 'medical_procedures.id_reference', '=', 'references.id')
             ->join('conceptos', 'medical_procedures.id_concept', '=', 'conceptos.id')
             ->select(
@@ -42,11 +41,18 @@ class MedicalProcedureController extends Controller
 
         // $medicalprocedures = MedicalProcedure::orderBy('name', 'ASC')->get();
 
-
-        return response()->json([
-            'success' => true,
+        return view('admin/medicalprocedures/index', [
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
             'medicalprocedures' => $medicalprocedures
-        ], 200);
+        ]);
     }
 
     public function getTreatementProceadures()
@@ -109,9 +115,25 @@ class MedicalProcedureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+
+        $references = Reference::where('status','activo')->pluck('name','id');
+        $concepts = Concepto::where('status','activo')->pluck('name','id');
+        return view('admin.medicalprocedures.create',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'references' => $references,
+            'concepts' => $concepts
+        ]);
     }
 
     /**
@@ -131,6 +153,10 @@ class MedicalProcedureController extends Controller
     public function store(StoreMedicalProcedurePost $request)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $medicalprocedure = new MedicalProcedure();
@@ -140,10 +166,10 @@ class MedicalProcedureController extends Controller
             $medicalprocedure->price = $request->price;
             $medicalprocedure->id_reference = $request->id_reference;
             $medicalprocedure->id_concept = $request->id_concept;
-            $medicalprocedure->status = $request->status;
+            $medicalprocedure->status = $status;
             $medicalprocedure->save();
             DB::commit();
-            return response()->json($medicalprocedure, 200);
+            return redirect()->route('get-medical-procedures');
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e], 422);
@@ -167,9 +193,27 @@ class MedicalProcedureController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
-        //
+        $activeMenu = $this->activeMenu($layout, $pageName);
+
+        $references = Reference::where('status','activo')->pluck('name','id');
+        $concepts = Concepto::where('status','activo')->pluck('name','id');
+        $medicalprocedure = MedicalProcedure::find($id);
+        return view('admin.medicalprocedures.edit',[
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenu(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout,
+            'references'=>$references,
+            'concepts'=>$concepts,
+            'medicalprocedure'=>$medicalprocedure
+        ]);
     }
 
     /**
@@ -182,6 +226,10 @@ class MedicalProcedureController extends Controller
     public function update(UpdateMedicalProcedurePut $request, $id)
     {
         try {
+            $status = "activo";
+            if($request->status != "on"){
+                $status = "inactivo";
+            }
             $validate = $request->validated();
             DB::beginTransaction();
             $medicalprocedure = MedicalProcedure::find($id);
@@ -191,10 +239,10 @@ class MedicalProcedureController extends Controller
             $medicalprocedure->price = $request->price;
             $medicalprocedure->id_reference = $request->id_reference;
             $medicalprocedure->id_concept = $request->id_concept;
-            $medicalprocedure->status = $request->status;
+            $medicalprocedure->status = $status;
             $medicalprocedure->save();
             DB::commit();
-            return response()->json($medicalprocedure, 200);
+            return redirect()->route('get-medical-procedures');
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e], 422);
