@@ -20,7 +20,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class PanelController extends Controller
 {
-    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'panel_control')
+    public function index($layout = 'sidebar', $theme = 'dark', $pageName = 'panel_control')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $now = Carbon::now();

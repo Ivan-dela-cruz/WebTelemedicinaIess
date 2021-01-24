@@ -19,7 +19,7 @@ class MedicalProcedureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function index($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $medicalprocedures = MedicalProcedure::join('references', 'medical_procedures.id_reference', '=', 'references.id')
@@ -115,7 +115,7 @@ class MedicalProcedureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function create($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
 
@@ -193,7 +193,7 @@ class MedicalProcedureController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function edit($id,$layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
 

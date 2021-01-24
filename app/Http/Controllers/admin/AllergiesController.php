@@ -19,7 +19,7 @@ class AllergiesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function index($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $allergies = Allergy::orderBy('name', 'ASC')->paginate(5);
@@ -84,7 +84,7 @@ class AllergiesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function create($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         return view('admin.allergies.create',[
@@ -156,7 +156,7 @@ class AllergiesController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function edit($id,$layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $allergy = Allergy::find($id);

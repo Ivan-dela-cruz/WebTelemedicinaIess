@@ -34,6 +34,66 @@ class Controller extends BaseController
         return $path_complete;
     }
 
+    public function loadMenu($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
+    {
+        $activeMenu = $this->activeMenu($layout, $pageName);
+        // dd($pageName);
+        return view('layout.sidebar-menu', [
+            'top_menu' => $this->topMenu(),
+            'side_menu' => $this->sideMenu(),
+            'simple_menu' => $this->simpleMenuHome(),
+            'first_page_name' => $activeMenu['first_page_name'],
+            'second_page_name' => $activeMenu['second_page_name'],
+            'third_page_name' => $activeMenu['third_page_name'],
+            'page_name' => $pageName,
+            'theme' => $theme,
+            'layout' => $layout
+        ]);
+    }
+    public function simpleMenuHome()
+    {
+        return [
+            'dashboard' => [
+                'icon' => 'home',
+                'layout' => 'simple-menu',
+                'page_name' => 'dashboard',
+                'title' => 'Dashboard'
+            ],
+            
+            'inbox' => [
+                'icon' => 'inbox',
+                'layout' => 'simple-menu',
+                'page_name' => 'inbox',
+                'title' => 'Accecsos'
+            ],
+            'file-manager' => [
+                'icon' => 'hard-drive',
+                'layout' => 'simple-menu',
+                'page_name' => 'file-manager',
+                'title' => 'File Manager'
+            ],
+            'point-of-sale' => [
+                'icon' => 'credit-card',
+                'layout' => 'simple-menu',
+                'page_name' => 'point-of-sale',
+                'title' => 'Point of Sale'
+            ],
+            'chat' => [
+                'icon' => 'message-square',
+                'layout' => 'simple-menu',
+                'page_name' => 'chat',
+                'title' => 'Chat'
+            ],
+            'post' => [
+                'icon' => 'file-text',
+                'layout' => 'simple-menu',
+                'page_name' => 'post',
+                'title' => 'Post'
+            ],
+            
+           
+        ];
+    }
 
     // public function loadPage($layout = 'side-menu', $theme = 'light', $pageName = 'dashboard')
     public function loadPage($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')

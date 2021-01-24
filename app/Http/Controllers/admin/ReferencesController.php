@@ -17,7 +17,7 @@ class ReferencesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function index($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $references = Reference::orderBy('name', 'ASC')->get();
@@ -54,7 +54,7 @@ class ReferencesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function create($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         return view('admin.references.create',[
@@ -115,7 +115,7 @@ class ReferencesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function edit($id,$layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $reference = Reference::find($id);

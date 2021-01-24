@@ -21,7 +21,7 @@ class DiagnosticController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function index($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $diagnostics = Diagnostic::orderBy('name', 'ASC')->get();
@@ -72,7 +72,7 @@ class DiagnosticController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function create($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         return view('admin.diagnostics.create',[
@@ -134,7 +134,7 @@ class DiagnosticController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id,$layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function edit($id,$layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $diagnostic = Diagnostic::find($id);

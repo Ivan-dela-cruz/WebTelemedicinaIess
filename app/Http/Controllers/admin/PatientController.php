@@ -25,7 +25,7 @@ class PatientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function index(Request $request, $layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $text_search = $request->text_search;
@@ -68,7 +68,7 @@ class PatientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function create($layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         return view('admin.patients.create',[
@@ -193,7 +193,7 @@ class PatientController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, $layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
+    public function edit($id, $layout = 'sidebar', $theme = 'dark', $pageName = 'dashboard')
     {
         $activeMenu = $this->activeMenu($layout, $pageName);
         $users = Patients::find($id);

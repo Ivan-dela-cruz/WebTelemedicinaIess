@@ -15,6 +15,7 @@ class PageController extends Controller
     // public function loadPage($layout = 'side-menu', $theme = 'light', $pageName = 'dashboard')
     public function loadPage($layout = 'side-menu', $theme = 'dark', $pageName = 'dashboard')
     {
+        return redirect()->route('admin');
         $activeMenu = $this->activeMenu($layout, $pageName);
         // dd($pageName);
         return view('pages/' . $pageName, [
